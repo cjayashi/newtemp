@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Zignals — Admin (demo)</title>
+    <title>Zignals — Admin</title>
     <link rel="stylesheet" href="./assets/styles.css" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   </head>
@@ -12,12 +12,13 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
         </header>
         <section class="content">
           <h1 class="h1">Admin overview</h1>
-          <p class="sub">Read-only slice of the same localStorage demo payloads your members generate — wire to real admin APIs later.</p>
+          <p class="sub">Cross-view of deposits, withdrawals, and program trades for operations. Plug in your admin API when ready.</p>
           <div class="grid grid-4">
             <div class="interactive-card stat-chip" data-tilt>
               <div class="muted">Deposits</div>
@@ -37,19 +38,21 @@
             </div>
           </div>
           <div class="card">
-            <strong>Recent demo activity</strong>
-            <table class="history">
-              <thead>
-                <tr>
-                  <th>When</th>
-                  <th>Type</th>
-                  <th>Detail</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="admin-activity"></tbody>
-            </table>
+            <strong>Recent activity</strong>
+            <div class="table-scroll">
+              <table class="history">
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Type</th>
+                    <th>Detail</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-activity"></tbody>
+              </table>
+            </div>
           </div>
         </section>
       </main>

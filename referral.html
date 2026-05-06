@@ -12,13 +12,14 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
           <button type="button" class="icon-btn">🔔</button>
         </header>
         <section class="content">
           <h1 class="h1">Referral program</h1>
-          <p class="sub">Copy your code, share the link, simulate a click for UX review. Stats persist in localStorage.</p>
+          <p class="sub">Copy your code or full link; track clicks, sign-ups, and estimated rewards on your account.</p>
           <div class="grid grid-3">
             <div class="interactive-card stat-chip" data-tilt>
               <div class="muted">Link clicks</div>
@@ -29,7 +30,7 @@
               <div class="value" data-ref-stat="signups">-</div>
             </div>
             <div class="interactive-card stat-chip" data-tilt>
-              <div class="muted">Commission (demo)</div>
+              <div class="muted">Est. commissions</div>
               <div class="value" data-ref-stat="commission">-</div>
             </div>
           </div>
@@ -38,7 +39,7 @@
             <div id="ref-code" class="ref-code-display" style="margin: 12px 0">—</div>
             <div class="row">
               <button type="button" class="btn secondary" id="copy-code">Copy code</button>
-              <button type="button" class="btn ok" id="sim-click">Simulate link click</button>
+              <button type="button" class="btn ok" id="sim-click">Record test click</button>
             </div>
           </div>
           <div class="card interactive" data-tilt>

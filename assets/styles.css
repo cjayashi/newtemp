@@ -201,12 +201,21 @@ body::after {
   color: var(--muted);
   margin-right: auto;
 }
+.dashboard-logout-row {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  margin-right: 4px;
+}
+.topbar-fill {
+  flex: 1;
+  min-width: 12px;
+}
 [data-auth-slot] {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-right: auto;
 }
 .icon-btn {
   width: 38px;
@@ -348,10 +357,57 @@ body::after {
   color: #6ee7b7;
   border: 1px solid rgba(52, 211, 153, 0.35);
 }
-.badge-live.demo {
-  background: rgba(251, 191, 36, 0.12);
-  color: #fcd34d;
-  border: 1px solid rgba(251, 191, 36, 0.35);
+.badge-live.standard {
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-right: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(15, 23, 42, 0.55);
+  color: #dbeafe;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 8, 0.65);
+  z-index: 150;
+  backdrop-filter: blur(4px);
+}
+.nav-backdrop.show {
+  display: block;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 6px;
+}
+.table-scroll .history {
+  min-width: 520px;
+}
+
+.tradingview-widget-container.ticker-script-host {
+  height: auto;
+  min-height: 46px;
+}
+.tickertape-wrap .tradingview-widget-container__widget {
+  min-height: 46px;
 }
 
 input,
@@ -819,5 +875,23 @@ details.announce-card .announce-body {
   }
   .toast.show {
     transform: translateY(0);
+  }
+  .tradingview-frame-wrap iframe {
+    height: min(420px, 58vh);
+  }
+  .tradingview-frame-wrap {
+    min-height: 360px;
+  }
+}
+
+@media (pointer: coarse) {
+  .icon-btn,
+  .mobile-nav-toggle,
+  .btn {
+    min-height: 44px;
+  }
+  .mobile-nav-toggle {
+    width: 44px;
+    height: 44px;
   }
 }

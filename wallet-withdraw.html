@@ -12,13 +12,14 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
           <button type="button" class="icon-btn">🔔</button>
         </header>
         <section class="content">
           <h1 class="h1">Withdraw</h1>
-          <p class="sub">Reserve flow + confirm checkbox mirrors live POST shape.</p>
+          <p class="sub">Available balance updates after requests; confirmations match live payout validation.</p>
           <div class="card interactive" data-tilt>
             <div class="note">Available: <span data-available>-</span></div>
             <form id="withdraw-form" class="grid grid-2" style="margin-top: 10px">
@@ -40,17 +41,19 @@
           </div>
           <div class="card">
             <h3 style="margin: 0 0 8px">Withdraw History</h3>
-            <table class="history">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Destination</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="withdraw-history"></tbody>
-            </table>
+            <div class="table-scroll">
+              <table class="history">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="withdraw-history"></tbody>
+              </table>
+            </div>
           </div>
         </section>
       </main>

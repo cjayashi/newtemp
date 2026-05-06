@@ -14,16 +14,20 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
+          <div class="dashboard-logout-row" id="dashboard-logout-row" style="display: none">
+            <button type="button" class="btn secondary btn-sm" id="dashboard-logout">Log out</button>
+          </div>
           <button type="button" class="icon-btn" title="Notifications">🔔</button>
           <a class="icon-btn" href="./referral.html" title="Referral">🎁</a>
         </header>
         <section class="content">
           <h1 class="h1">Dashboard</h1>
           <p class="sub">
-            Smooth demo prototype: hover the stat cards for micro-interaction. Use <strong>Market Chart</strong> for TradingView + CoinDesk headlines + CoinGecko spot
-            quotes.
+            Interactive snapshot of your wallet and program. Open <strong>Market</strong> for live charts, headline stream, and spot quotes. Tilt effects are enabled on
+            larger screens.
           </p>
           <div class="row" style="margin-bottom: 16px">
             <a class="btn" href="./managed-trade.html">Execute trade</a>
@@ -50,12 +54,12 @@
           <div class="grid grid-2">
             <div class="card interactive" data-tilt>
               <strong>Referral</strong>
-              <p class="note">Share your code and track demo commissions on the referral page.</p>
-              <a class="btn secondary btn-sm" href="./referral.html">Open referral hub</a>
+              <p class="note">Share your link, copy your code, and track rewards from the referral hub.</p>
+              <a class="btn secondary btn-sm" href="./referral.html">Referral hub</a>
             </div>
             <div class="card interactive" data-tilt>
-              <strong>Wire-up</strong>
-              <p class="note">Same-origin session hits your real <code>/api/me</code> routes; otherwise localStorage demo mode.</p>
+              <strong>Sync</strong>
+              <p class="note">When you’re on the same origin as the API, balances stream from <code>/api/me</code>. Otherwise updates stay on this device until you connect.</p>
             </div>
           </div>
         </section>

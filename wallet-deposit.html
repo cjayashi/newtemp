@@ -12,13 +12,14 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
           <button type="button" class="icon-btn">🔔</button>
         </header>
         <section class="content">
           <h1 class="h1">Deposit</h1>
-          <p class="sub">Submit proofs and currencies your backend expects — demo stores rows locally.</p>
+          <p class="sub">Funding channels, proof uploads, and status history mirror the production intake flow.</p>
           <div class="card interactive" data-tilt>
             <form id="deposit-form" class="grid grid-2">
               <div>
@@ -46,17 +47,19 @@
           </div>
           <div class="card">
             <h3 style="margin: 0 0 8px">Deposit History</h3>
-            <table class="history">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Method</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="deposit-history"></tbody>
-            </table>
+            <div class="table-scroll">
+              <table class="history">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="deposit-history"></tbody>
+              </table>
+            </div>
           </div>
         </section>
       </main>

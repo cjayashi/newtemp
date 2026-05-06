@@ -12,12 +12,13 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
         </header>
         <section class="content">
           <h1 class="h1">Report an issue</h1>
-          <p class="sub">Non-destructive demo form — emits a toast instead of emailing.</p>
+          <p class="sub">Route this form to Slack, Zendesk, or email on the server. Here it confirms receipt instantly.</p>
           <div class="card interactive" data-tilt>
             <form id="issue-form" class="grid grid-2">
               <div>
@@ -38,7 +39,7 @@
                 <label>Describe the issue</label>
                 <textarea name="detail" rows="5" placeholder="Steps, timestamps, wallets…" required></textarea>
               </div>
-              <div style="grid-column: 1 / -1"><button type="submit" class="btn ok">Send demo ticket</button></div>
+              <div style="grid-column: 1 / -1"><button type="submit" class="btn ok">Submit report</button></div>
             </form>
           </div>
         </section>

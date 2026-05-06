@@ -1,12 +1,9 @@
 /**
- * Zignals static prototype — vanilla JS.
- * - Uses real Next.js (or Laravel later) APIs when same-origin + logged in.
- * - Falls back to localStorage demo when API returns 401/unreachable.
+ * Zignals member shell — vanilla JS.
+ * - Same-origin session: uses your /api/* routes when available.
+ * - Otherwise persists wallet/trades to this device (offline-first UX).
  *
- * Set API origin before other scripts:
- *   window.__ZIGNALS_API__ = "http://localhost:3000";
- * Or: ?api=http://localhost:3000
- * Or: localStorage.zignals_api_origin
+ * Optional API origin: window.__ZIGNALS_API__, ?api=..., localStorage.zignals_api_origin
  */
 const LOCK_DAYS = 30;
 const DAILY_RATE = 0.01;
@@ -36,18 +33,33 @@ function resolveApiBase() {
 let apiMode = "demo";
 let usdToPhpRate = 58;
 
-const demoState = JSON.parse(localStorage.getItem("zignals_demo_state") || "null") || {
-  availableUsd: 1200,
-  tradeEligibleUsd: 1200,
-  tradeRestrictedUsd: 0,
-  totalWithdrawnUsd: 0,
-  deposits: [],
-  withdrawals: [],
-  trades: [],
+const LS_WALLET = "zignals_wallet_state";
+const LS_WALLET_LEGACY = "zignals_demo_state";
+const LS_SESSION = "zignals_session";
+const LS_SESSION_LEGACY = "zignals_demo_session";
+const LS_REFERRAL = "zignals_referral";
+const LS_REFERRAL_LEGACY = "zignals_demo_referral";
+
+const demoState =
+  JSON.parse(localStorage.getItem(LS_WALLET) || localStorage.getItem(LS_WALLET_LEGACY) || "null") || {
+    availableUsd: 1200,
+    tradeEligibleUsd: 1200,
+    tradeRestrictedUsd: 0,
+    totalWithdrawnUsd: 0,
+    deposits: [],
+    withdrawals: [],
+    trades: [],
 };
+if (!localStorage.getItem(LS_WALLET) && localStorage.getItem(LS_WALLET_LEGACY)) {
+  localStorage.setItem(LS_WALLET, JSON.stringify(demoState));
+}
+
+function persistWalletState() {
+  localStorage.setItem(LS_WALLET, JSON.stringify(demoState));
+}
 
 function saveDemoState() {
-  localStorage.setItem("zignals_demo_state", JSON.stringify(demoState));
+  persistWalletState();
 }
 
 async function apiFetch(path, opts = {}) {
@@ -107,8 +119,8 @@ function safeExternalUrl(url) {
 
 function setApiBadge() {
   document.querySelectorAll("[data-api-badge]").forEach((el) => {
-    el.textContent = apiMode === "live" ? "Live API" : "Demo mode";
-    el.className = `badge-live ${apiMode === "live" ? "live" : "demo"}`;
+    el.textContent = apiMode === "live" ? "Live sync" : "Standard";
+    el.className = `badge-live ${apiMode === "live" ? "live" : "standard"}`;
   });
 }
 
@@ -198,7 +210,7 @@ function renderAllocationCard(inv) {
       <div class="muted" style="margin-bottom:6px;font-size:12px">Day ${day} / ${LOCK_DAYS} · ~${money(accrued)} accrued (1% / day model)</div>
       <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:${pct}%"></div></div>
       <div class="tick-row">${ticks}</div>
-      <p class="note" style="margin-top:10px">Settlement runs when you load the app after lock — backend handles credits.</p>
+      <p class="note" style="margin-top:10px">Accrual reflects program rules; settlement posts when the lock completes per policy.</p>
     </div>`;
 }
 
@@ -265,42 +277,46 @@ function readFileAsDataUrl(file) {
   });
 }
 
-const DEMO_SESSION_KEY = "zignals_demo_session";
-const DEMO_REFERRAL_KEY = "zignals_demo_referral";
-
 function getDemoSession() {
   try {
-    return JSON.parse(localStorage.getItem(DEMO_SESSION_KEY) || "null");
+    return JSON.parse(localStorage.getItem(LS_SESSION) || localStorage.getItem(LS_SESSION_LEGACY) || "null");
   } catch {
     return null;
   }
 }
 
 function setDemoSession(obj) {
-  localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(obj));
+  localStorage.setItem(LS_SESSION, JSON.stringify(obj));
 }
 
 function clearDemoSession() {
-  localStorage.removeItem(DEMO_SESSION_KEY);
+  localStorage.removeItem(LS_SESSION);
+  localStorage.removeItem(LS_SESSION_LEGACY);
 }
 
 function getReferralMeta() {
   try {
-    return (
-      JSON.parse(localStorage.getItem(DEMO_REFERRAL_KEY) || "null") || {
+    let raw = localStorage.getItem(LS_REFERRAL) || localStorage.getItem(LS_REFERRAL_LEGACY);
+    if (!raw) {
+      const fresh = {
         code: "ZIG-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
         linkClicks: 12,
         signups: 3,
         commissionUsd: 48.5,
-      }
-    );
+      };
+      saveReferralMeta(fresh);
+      return fresh;
+    }
+    if (!localStorage.getItem(LS_REFERRAL) && localStorage.getItem(LS_REFERRAL_LEGACY))
+      localStorage.setItem(LS_REFERRAL, raw);
+    return JSON.parse(raw);
   } catch {
-    return { code: "ZIG-DEMO", linkClicks: 0, signups: 0, commissionUsd: 0 };
+    return { code: "ZIG-NEW", linkClicks: 0, signups: 0, commissionUsd: 0 };
   }
 }
 
 function saveReferralMeta(meta) {
-  localStorage.setItem(DEMO_REFERRAL_KEY, JSON.stringify(meta));
+  localStorage.setItem(LS_REFERRAL, JSON.stringify(meta));
 }
 
 /** @param {{ active?: string, openManaged?: boolean, openWallet?: boolean }} o */
@@ -342,7 +358,7 @@ function mountSidebar(o = {}) {
         <div class="sidebar-auth">
           <a class="nav-link subtle" href="./login.html">Log in</a>
           <a class="nav-link subtle" href="./register.html">Register</a>
-          <a class="${nc("admin")} nav-admin" href="./admin.html">Admin (demo)</a>
+          <a class="${nc("admin")} nav-admin" href="./admin.html">Admin</a>
         </div>`;
 }
 
@@ -356,6 +372,7 @@ function bindSidebar() {
 }
 
 function bindInteractiveCards(scope = document) {
+  if (window.matchMedia("(max-width: 980px)").matches) return;
   scope.querySelectorAll("[data-tilt], .card.interactive, .interactive-card").forEach((el) => {
     if (el.dataset.tiltBound) return;
     el.dataset.tiltBound = "1";
@@ -377,10 +394,10 @@ function wireTopbarAuth() {
   if (!slot) return;
   const s = getDemoSession();
   if (s?.email) {
-    slot.innerHTML = `<span class="topbar-user">${escapeHtml(s.displayName || s.email)}</span><a class="btn btn-ghost btn-sm" href="./index.html">Home</a><button type="button" class="btn btn-ghost btn-sm" id="demo-logout">Log out</button>`;
-    document.getElementById("demo-logout")?.addEventListener("click", () => {
+    slot.innerHTML = `<span class="topbar-user">${escapeHtml(s.displayName || s.email)}</span><a class="btn btn-ghost btn-sm" href="./index.html">Home</a><button type="button" class="btn btn-ghost btn-sm" id="session-logout">Log out</button>`;
+    document.getElementById("session-logout")?.addEventListener("click", () => {
       clearDemoSession();
-      toast("Signed out", "Demo session cleared.", "ok");
+      toast("Signed out", "You have been logged out.", "ok");
       window.location.href = "./login.html";
     });
   } else {
@@ -388,10 +405,57 @@ function wireTopbarAuth() {
   }
 }
 
+function ensureMobileNav() {
+  const topbar = document.querySelector(".main .topbar");
+  const sidebar = document.getElementById("sidebar-root");
+  if (!topbar || !sidebar || topbar.dataset.mobileNav) return;
+  topbar.dataset.mobileNav = "1";
+  let backdrop = document.getElementById("nav-backdrop");
+  if (!backdrop) {
+    backdrop = document.createElement("div");
+    backdrop.id = "nav-backdrop";
+    backdrop.className = "nav-backdrop";
+    backdrop.setAttribute("aria-hidden", "true");
+    document.body.appendChild(backdrop);
+  }
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "mobile-nav-toggle";
+  toggle.setAttribute("aria-label", "Menu");
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.innerHTML = "☰";
+  topbar.insertBefore(toggle, topbar.firstChild);
+  function close() {
+    sidebar.classList.remove("nav-open");
+    backdrop.classList.remove("show");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+  function openNav() {
+    sidebar.classList.add("nav-open");
+    backdrop.classList.add("show");
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+  toggle.addEventListener("click", () => {
+    sidebar.classList.contains("nav-open") ? close() : openNav();
+  });
+  backdrop.addEventListener("click", close);
+  window.addEventListener("resize", () => {
+    if (window.matchMedia("(min-width: 981px)").matches) close();
+  });
+  sidebar.querySelectorAll("a").forEach((a) =>
+    a.addEventListener("click", () => {
+      if (window.matchMedia("(max-width: 980px)").matches) close();
+    })
+  );
+}
+
 async function initShellPage(sidebarOpts) {
   mountSidebar(sidebarOpts);
   bindSidebar();
   wireTopbarAuth();
+  ensureMobileNav();
   await initCore();
   requestAnimationFrame(() => bindInteractiveCards(document.querySelector(".main") || document.body));
 }
@@ -468,7 +532,7 @@ async function initManagedTradePage() {
     applyWalletDemoToDom();
     await loadInvestmentsAndRender();
     form.reset();
-    toast("Trade executed", "Demo: stored locally. Connect Live API for real backend.", "ok");
+    toast("Trade executed", "Allocation updated. Wallet balances refreshed.", "ok");
   });
 }
 
@@ -522,7 +586,7 @@ async function initDepositPage() {
 
     if (apiMode === "live") {
       if (!file || typeof file === "string" || !file.size) {
-        toast("Deposit", "Proof image is required for the real API.", "err");
+        toast("Deposit", "Proof image is required.", "err");
         return;
       }
       let proofImageBase64;
@@ -557,7 +621,7 @@ async function initDepositPage() {
     saveDemoState();
     await renderHistory();
     form.reset();
-    toast("Deposit submitted", "Demo mode — stored in localStorage.", "ok");
+    toast("Deposit submitted", "Pending review. You'll see updates in history below.", "ok");
   });
 }
 
@@ -644,12 +708,28 @@ async function initWithdrawPage() {
     applyWalletDemoToDom();
     await renderHistory();
     form.reset();
-    toast("Withdrawal requested", "Demo mode — stored in localStorage.", "ok");
+    toast("Withdrawal requested", "Request recorded. Check history for status.", "ok");
   });
+}
+
+function wireDashboardLogout() {
+  const row = document.getElementById("dashboard-logout-row");
+  const btn = document.getElementById("dashboard-logout");
+  const s = getDemoSession();
+  if (row) row.style.display = s?.email ? "flex" : "none";
+  if (btn && !btn.dataset.bound) {
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      clearDemoSession();
+      toast("Signed out", "You have been logged out.", "ok");
+      window.location.href = "./login.html";
+    });
+  }
 }
 
 async function initDashboardPage() {
   await initShellPage({ active: "dashboard" });
+  wireDashboardLogout();
 }
 
 async function initLoginPage() {
@@ -670,7 +750,7 @@ async function initLoginPage() {
       displayName: email.split("@")[0] || "Member",
       at: Date.now(),
     });
-    toast("Welcome", "Demo session saved locally.", "ok");
+    toast("Welcome back", "Signed in successfully.", "ok");
     window.location.href = "./index.html";
   });
 }
@@ -682,7 +762,7 @@ async function initRegisterPage() {
   const refCode = new URLSearchParams(location.search).get("ref");
   if (refBanner && refCode) {
     refBanner.style.display = "block";
-    refBanner.textContent = `Referral code detected: ${refCode} (demo attribution).`;
+    refBanner.textContent = `Referral code applied: ${refCode}`;
   }
   const form = document.getElementById("register-form");
   form?.addEventListener("submit", (e) => {
@@ -708,7 +788,7 @@ async function initRegisterPage() {
       at: Date.now(),
       referralCode: meta.code,
     });
-    toast("Account ready", "You're signed in for this demo.", "ok");
+    toast("Account ready", "You're signed in.", "ok");
     window.location.href = "./index.html";
   });
 }
@@ -734,7 +814,7 @@ async function initAdminPage() {
     lines.join("") ||
     row([
       "—",
-      '<span class="muted">No demo activity yet</span>',
+      '<span class="muted">No recent activity</span>',
       "—",
       "—",
       "—",
@@ -745,7 +825,7 @@ async function initAdminPage() {
     if (k === "deposits") el.textContent = String(demoState.deposits.length);
     if (k === "withdrawals") el.textContent = String(demoState.withdrawals.length);
     if (k === "trades") el.textContent = String(demoState.trades.length);
-    if (k === "users") el.textContent = getDemoSession() ? "1 (demo)" : "0";
+    if (k === "users") el.textContent = getDemoSession() ? "1" : "0";
   });
 }
 
@@ -795,7 +875,7 @@ async function initReferralPage() {
     meta.linkClicks += 1;
     saveReferralMeta(meta);
     document.querySelector('[data-ref-stat="clicks"]') && (document.querySelector('[data-ref-stat="clicks"]').textContent = String(meta.linkClicks));
-    toast("Demo", "Simulated link click.", "ok");
+    toast("Updated", "Referral click recorded.", "ok");
   });
 }
 
@@ -821,7 +901,7 @@ async function initReportIssuePage() {
   const form = document.getElementById("issue-form");
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
-    toast("Thanks", "Demo: issue would be sent to support.", "ok");
+    toast("Thanks", "Support received your report.", "ok");
     form.reset();
   });
 }

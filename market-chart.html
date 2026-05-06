@@ -12,33 +12,48 @@
       <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <span class="badge-live standard" data-api-badge>Connecting…</span>
+          <div class="topbar-fill" aria-hidden="true"></div>
           <div data-auth-slot></div>
           <button type="button" class="btn secondary btn-sm" id="refresh-market">Refresh feeds</button>
         </header>
         <section class="content content-wide">
           <h1 class="h1">Charts &amp; market pulse</h1>
           <p class="sub">
-            <strong>TradingView</strong> embedded widgets • <strong>CoinGecko</strong> REST for spot movers • <strong>CoinDesk RSS</strong> via public proxy (<code
-              >api.allorigins.win</code
-            >
-            fallback). Replace with backend aggregation in production.
+            <strong>TradingView</strong> widgets for tape + chart • <strong>CoinGecko</strong> REST for BTC / ETH / SOL • <strong>CoinDesk</strong> headline RSS (via fetch proxy when
+            needed).
           </p>
 
           <div class="tickertape-wrap">
-            <iframe
-              title="TradingView ticker tape"
-              src="https://www.tradingview-widget.com/embed-widget/ticker-tape/?locale=en&colorTheme=dark&isTransparent=true&backgroundColor=131722&showSymbolLogo=1&symbols=BINANCE%3ABTCUSDT%2CBINANCE%3AETHUSDT%2CCOINBASE%3ASOLUSD%2CFX_IDC%3AUSDPHP"
-              style="height: 78px; width: 100%; border: 0"></iframe>
+            <div class="tradingview-widget-container ticker-script-host">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+  "symbols": [
+    { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" },
+    { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" },
+    { "proName": "COINBASE:SOLUSD", "title": "SOL" },
+    { "proName": "FX_IDC:USDPHP", "title": "USD/PHP" },
+    { "proName": "NASDAQ:AAPL", "title": "AAPL" },
+    { "proName": "BITSTAMP:BTCUSD", "title": "BTC/USD" }
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+              </script>
+            </div>
           </div>
 
           <div class="tradingview-frame-wrap interactive-card" style="margin-bottom: 18px">
             <iframe
               title="TradingView advanced chart — BTC/USDT"
-              src="https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en&symbol=BINANCE%3ABTCUSDT&interval=D&timezone=Etc%2FUTC&theme=dark&style=1&backgroundColor=131722&gridColor=363c4e&calendarWidget=false"
+              src="https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en&amp;symbol=BINANCE%3ABTCUSDT&amp;interval=D&amp;timezone=Etc%2FUTC&amp;theme=dark&amp;style=1&amp;backgroundColor=131722&amp;gridColor=363c4e&amp;calendarWidget=false"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"></iframe>
-            <p class="note" style="padding: 10px 14px">Chart by <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color: var(--accent)">TradingView</a>.</p>
+            <p class="note" style="padding: 10px 14px">Charts by <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color: var(--accent)">TradingView</a>.</p>
           </div>
 
           <h2 style="margin: 0 0 10px; font-size: 18px">Spot quotes</h2>
@@ -48,8 +63,8 @@
           <div class="card" style="padding: 14px">
             <div id="coindesk-feed"></div>
             <p class="api-hint" style="margin-top: 14px">
-              Sources: TradingView widgets, CoinGecko <code>/simple/price</code>, CoinDesk RSS. See
-              <a href="https://www.coindesk.com/" target="_blank" rel="noopener" style="color: var(--accent)">coindesk.com</a> for originals.
+              Sources: TradingView widgets, CoinGecko <code>/simple/price</code>, CoinDesk RSS. Read originals at
+              <a href="https://www.coindesk.com/" target="_blank" rel="noopener" style="color: var(--accent)">coindesk.com</a>.
             </p>
           </div>
         </section>
