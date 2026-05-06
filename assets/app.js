@@ -325,22 +325,24 @@ function mountSidebar(o = {}) {
   if (!root) return;
   delete root.dataset.navBound;
 
-  const { active = "", openManaged = true, openWallet = true } = o;
+  const { active = "", openManaged = false, openWallet = false } = o;
   const nc = (key) => (active === key ? "nav-link active" : "nav-link");
   const mOpen = openManaged ? "submenu open" : "submenu";
   const wOpen = openWallet ? "submenu open" : "submenu";
+  const mExpanded = openManaged ? " group-title-expanded" : "";
+  const wExpanded = openWallet ? " group-title-expanded" : "";
 
   root.innerHTML = `
         <a class="brand magnetic" href="./index.html">Zignals<span>.org</span></a>
         <a class="${nc("dashboard")}" href="./index.html">Dashboard</a>
-        <button id="toggle-managed" type="button" class="group-title">Managed Trade</button>
+        <button id="toggle-managed" type="button" class="group-title${mExpanded}" aria-expanded="${openManaged ? "true" : "false"}" aria-controls="managed-submenu"><span class="group-title-text">Managed Trade</span></button>
         <div id="managed-submenu" class="${mOpen}">
           <div class="submenu-inner">
             <a class="${nc("managed_trade")}" href="./managed-trade.html">Trading Program</a>
             <a class="nav-link" href="./managed-trade.html#history">Trading History</a>
           </div>
         </div>
-        <button id="toggle-wallet" type="button" class="group-title">Wallet</button>
+        <button id="toggle-wallet" type="button" class="group-title${wExpanded}" aria-expanded="${openWallet ? "true" : "false"}" aria-controls="wallet-submenu"><span class="group-title-text">Wallet</span></button>
         <div id="wallet-submenu" class="${wOpen}">
           <div class="submenu-inner">
             <a class="${nc("deposit")}" href="./wallet-deposit.html">Deposit</a>
@@ -363,20 +365,54 @@ function mountSidebar(o = {}) {
         </div>`;
 }
 
+/** Accordion: only one of Managed Trade / Wallet is expanded; both headers stay clickable. */
 function bindSidebar() {
   const root = document.getElementById("sidebar-root");
   if (!root || root.dataset.navBound === "1") return;
   root.dataset.navBound = "1";
 
+  function accordionToggle(which) {
+    const m = document.getElementById("managed-submenu");
+    const w = document.getElementById("wallet-submenu");
+    const tm = document.getElementById("toggle-managed");
+    const tw = document.getElementById("toggle-wallet");
+
+    if (which === "managed") {
+      const wasOpen = m?.classList.contains("open");
+      if (wasOpen) {
+        m?.classList.remove("open");
+        tm?.classList.remove("group-title-expanded");
+      } else {
+        w?.classList.remove("open");
+        tw?.classList.remove("group-title-expanded");
+        m?.classList.add("open");
+        tm?.classList.add("group-title-expanded");
+      }
+    } else {
+      const wasWalletOpen = w?.classList.contains("open");
+      if (wasWalletOpen) {
+        w?.classList.remove("open");
+        tw?.classList.remove("group-title-expanded");
+      } else {
+        m?.classList.remove("open");
+        tm?.classList.remove("group-title-expanded");
+        w?.classList.add("open");
+        tw?.classList.add("group-title-expanded");
+      }
+    }
+    tm?.setAttribute("aria-expanded", m?.classList.contains("open") ? "true" : "false");
+    tw?.setAttribute("aria-expanded", w?.classList.contains("open") ? "true" : "false");
+  }
+
   root.querySelector("#toggle-managed")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    document.getElementById("managed-submenu")?.classList.toggle("open");
+    accordionToggle("managed");
   });
   root.querySelector("#toggle-wallet")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    document.getElementById("wallet-submenu")?.classList.toggle("open");
+    accordionToggle("wallet");
   });
 }
 
@@ -476,7 +512,7 @@ async function initCore() {
 }
 
 async function initManagedTradePage() {
-  await initShellPage({ active: "managed_trade", openManaged: true, openWallet: true });
+  await initShellPage({ active: "managed_trade", openManaged: true, openWallet: false });
   const amount = document.getElementById("trade-amount");
   const maxBtn = document.getElementById("trade-max");
   const form = document.getElementById("trade-form");
@@ -546,7 +582,7 @@ async function initManagedTradePage() {
 }
 
 async function initDepositPage() {
-  await initShellPage({ active: "deposit", openManaged: true, openWallet: true });
+  await initShellPage({ active: "deposit", openManaged: false, openWallet: true });
   const form = document.getElementById("deposit-form");
   const history = document.getElementById("deposit-history");
 
@@ -635,7 +671,7 @@ async function initDepositPage() {
 }
 
 async function initWithdrawPage() {
-  await initShellPage({ active: "withdraw", openWallet: true });
+  await initShellPage({ active: "withdraw", openManaged: false, openWallet: true });
   const form = document.getElementById("withdraw-form");
   const history = document.getElementById("withdraw-history");
 
@@ -737,7 +773,7 @@ function wireDashboardLogout() {
 }
 
 async function initDashboardPage() {
-  await initShellPage({ active: "dashboard", openManaged: true, openWallet: true });
+  await initShellPage({ active: "dashboard" });
   wireDashboardLogout();
 }
 
@@ -803,7 +839,7 @@ async function initRegisterPage() {
 }
 
 async function initAdminPage() {
-  await initShellPage({ active: "admin", openManaged: true, openWallet: true });
+  await initShellPage({ active: "admin" });
   const tbody = document.getElementById("admin-activity");
   if (!tbody) return;
   function row(cells) {

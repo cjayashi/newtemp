@@ -104,11 +104,30 @@ body::after {
   background: transparent;
   color: #cbd5e1;
   text-align: left;
-  padding: 10px;
+  padding: 10px 12px 10px 10px;
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.22s var(--ease-smooth), transform 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.group-title-text {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.group-title::after {
+  content: "▸";
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform 0.3s var(--ease-smooth);
+}
+.group-title.group-title-expanded::after {
+  transform: rotate(90deg);
 }
 .group-title:hover {
   background: rgba(255, 255, 255, 0.06);
@@ -116,7 +135,7 @@ body::after {
 .group-title:active {
   transform: scale(0.99);
 }
-/* Block + max-height keeps each submenu independent (grid 0fr/1fr caused siblings to interfere in some layouts). */
+/* Max-height transition for accordion submenus (managed trade vs wallet — one open at a time in JS). */
 .submenu {
   margin: 4px 0 8px 14px;
   display: block;
