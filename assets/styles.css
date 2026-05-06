@@ -116,20 +116,21 @@ body::after {
 .group-title:active {
   transform: scale(0.99);
 }
+/* Block + max-height keeps each submenu independent (grid 0fr/1fr caused siblings to interfere in some layouts). */
 .submenu {
   margin: 4px 0 8px 14px;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.38s var(--ease-smooth);
+  display: block;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease-smooth);
 }
 .submenu.open {
-  grid-template-rows: 1fr;
+  max-height: 220px;
 }
 .submenu-inner {
-  min-height: 0;
-  overflow: hidden;
   display: grid;
   gap: 6px;
+  padding-bottom: 6px;
 }
 .nav-link {
   display: block;

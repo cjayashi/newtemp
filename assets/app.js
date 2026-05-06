@@ -323,8 +323,9 @@ function saveReferralMeta(meta) {
 function mountSidebar(o = {}) {
   const root = document.getElementById("sidebar-root");
   if (!root) return;
+  delete root.dataset.navBound;
 
-  const { active = "", openManaged = false, openWallet = false } = o;
+  const { active = "", openManaged = true, openWallet = true } = o;
   const nc = (key) => (active === key ? "nav-link active" : "nav-link");
   const mOpen = openManaged ? "submenu open" : "submenu";
   const wOpen = openWallet ? "submenu open" : "submenu";
@@ -363,10 +364,18 @@ function mountSidebar(o = {}) {
 }
 
 function bindSidebar() {
-  document.getElementById("toggle-managed")?.addEventListener("click", () => {
+  const root = document.getElementById("sidebar-root");
+  if (!root || root.dataset.navBound === "1") return;
+  root.dataset.navBound = "1";
+
+  root.querySelector("#toggle-managed")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     document.getElementById("managed-submenu")?.classList.toggle("open");
   });
-  document.getElementById("toggle-wallet")?.addEventListener("click", () => {
+  root.querySelector("#toggle-wallet")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     document.getElementById("wallet-submenu")?.classList.toggle("open");
   });
 }
@@ -467,7 +476,7 @@ async function initCore() {
 }
 
 async function initManagedTradePage() {
-  await initShellPage({ active: "managed_trade", openManaged: true });
+  await initShellPage({ active: "managed_trade", openManaged: true, openWallet: true });
   const amount = document.getElementById("trade-amount");
   const maxBtn = document.getElementById("trade-max");
   const form = document.getElementById("trade-form");
@@ -537,7 +546,7 @@ async function initManagedTradePage() {
 }
 
 async function initDepositPage() {
-  await initShellPage({ active: "deposit", openWallet: true });
+  await initShellPage({ active: "deposit", openManaged: true, openWallet: true });
   const form = document.getElementById("deposit-form");
   const history = document.getElementById("deposit-history");
 
@@ -728,7 +737,7 @@ function wireDashboardLogout() {
 }
 
 async function initDashboardPage() {
-  await initShellPage({ active: "dashboard" });
+  await initShellPage({ active: "dashboard", openManaged: true, openWallet: true });
   wireDashboardLogout();
 }
 
@@ -794,7 +803,7 @@ async function initRegisterPage() {
 }
 
 async function initAdminPage() {
-  await initShellPage({ active: "admin", openManaged: false, openWallet: false });
+  await initShellPage({ active: "admin", openManaged: true, openWallet: true });
   const tbody = document.getElementById("admin-activity");
   if (!tbody) return;
   function row(cells) {
