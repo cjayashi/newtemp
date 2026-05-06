@@ -28,6 +28,7 @@
       </aside>
       <main class="main">
         <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
           <button class="icon-btn">🔔</button>
           <a class="icon-btn" href="#">👤</a>
         </header>
@@ -51,6 +52,11 @@
               <p class="note">Readonly terms: Lock duration 30 days · Daily profit 1% · Total return 130% of principal.</p>
             </form>
           </div>
+          <div class="card allocations-wrap">
+            <h3 style="margin: 0 0 10px">Active allocation &amp; progress</h3>
+            <p class="note" style="margin-top: 0">30-day lock • day ticks and bar update after you execute a trade (demo uses your browser; live uses the API).</p>
+            <div id="allocations-ongoing"></div>
+          </div>
           <div id="history" class="card">
             <h3 style="margin:0 0 6px">Trading History</h3>
             <table class="history">
@@ -64,8 +70,7 @@
     <script src="./assets/app.js"></script>
     <script>
       DemoApp.bindSidebar("managed");
-      DemoApp.renderCommon();
-      DemoApp.bindManagedTrade();
+      DemoApp.initManagedTradePage();
     </script>
   </body>
   </html>

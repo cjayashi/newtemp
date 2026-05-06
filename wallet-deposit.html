@@ -23,7 +23,11 @@
         </div></div>
       </aside>
       <main class="main">
-        <header class="topbar"><button class="icon-btn">🔔</button><a class="icon-btn" href="#">👤</a></header>
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
+          <button class="icon-btn">🔔</button>
+          <a class="icon-btn" href="#">👤</a>
+        </header>
         <section class="content">
           <h1 class="h1">Deposit</h1>
           <p class="sub">Mode of payment + deposit form (same expected app behavior).</p>
@@ -42,8 +46,8 @@
                 <input name="reference" required />
               </div>
               <div style="grid-column:1/-1">
-                <label>Proof image</label>
-                <input type="file" accept="image/*" />
+                <label>Proof image <span class="muted">(required for Live API)</span></label>
+                <input name="proof" type="file" accept="image/*" />
               </div>
               <div style="grid-column:1/-1"><button class="btn ok" type="submit">Submit Deposit</button></div>
             </form>
@@ -61,8 +65,7 @@
     <script src="./assets/app.js"></script>
     <script>
       DemoApp.bindSidebar("wallet");
-      DemoApp.renderCommon();
-      DemoApp.bindDeposit();
+      DemoApp.initDepositPage();
     </script>
   </body>
   </html>

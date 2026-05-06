@@ -23,7 +23,11 @@
         </div></div>
       </aside>
       <main class="main">
-        <header class="topbar"><button class="icon-btn">🔔</button><a class="icon-btn" href="#">👤</a></header>
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
+          <button class="icon-btn">🔔</button>
+          <a class="icon-btn" href="#">👤</a>
+        </header>
         <section class="content">
           <h1 class="h1">Withdraw</h1>
           <p class="sub">Separate withdrawal form + withdrawal history.</p>
@@ -37,6 +41,11 @@
               <div>
                 <label>Destination</label>
                 <input name="destination" placeholder="Wallet address / payout rail" required />
+              </div>
+              <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px">
+                <label style="margin: 0; display: flex; align-items: center; gap: 8px; cursor: pointer">
+                  <input type="checkbox" name="confirm" /> I confirm payout details (required for Live API)
+                </label>
               </div>
               <div style="grid-column:1/-1"><button class="btn ok" type="submit">Submit Withdrawal</button></div>
             </form>
@@ -54,8 +63,7 @@
     <script src="./assets/app.js"></script>
     <script>
       DemoApp.bindSidebar("wallet");
-      DemoApp.renderCommon();
-      DemoApp.bindWithdraw();
+      DemoApp.initWithdrawPage();
     </script>
   </body>
   </html>

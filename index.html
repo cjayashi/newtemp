@@ -37,6 +37,7 @@
 
       <main class="main">
         <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
           <button class="icon-btn" title="Notifications">🔔</button>
           <a class="icon-btn" href="#" title="Profile">👤</a>
         </header>
@@ -58,7 +59,7 @@
             </div>
             <div class="card">
               <div class="muted">Total withdrawn</div>
-              <div class="value" id="total-withdrawn">See Withdraw page</div>
+              <div class="value" data-total-withdrawn>-</div>
             </div>
           </div>
           <div class="card">
@@ -73,7 +74,7 @@
     <script src="./assets/app.js"></script>
     <script>
       DemoApp.bindSidebar();
-      DemoApp.renderCommon();
+      DemoApp.initDashboardPage();
     </script>
   </body>
   </html>
