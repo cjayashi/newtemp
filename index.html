@@ -3,78 +3,67 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Zignals Static Demo - Dashboard</title>
+    <title>Zignals — Dashboard</title>
     <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div class="layout">
-      <aside class="sidebar">
-        <a class="brand" href="./index.html">Zignals<span>.org</span></a>
-        <a class="nav-link active" href="./index.html">Dashboard</a>
-        <button id="toggle-managed" class="group-title">Managed Trade</button>
-        <div id="managed-submenu" class="submenu">
-          <div class="submenu-inner">
-            <a class="nav-link" href="./managed-trade.html">Trading Program</a>
-            <a class="nav-link" href="./managed-trade.html#history">Trading History</a>
-          </div>
-        </div>
-        <button id="toggle-wallet" class="group-title">Wallet</button>
-        <div id="wallet-submenu" class="submenu">
-          <div class="submenu-inner">
-            <a class="nav-link" href="./wallet-deposit.html">Deposit</a>
-            <a class="nav-link" href="./wallet-withdraw.html">Withdraw</a>
-          </div>
-        </div>
-        <a class="nav-link" href="#">Affiliate Program</a>
-        <div class="divider"></div>
-        <a class="nav-link" href="#">Announcements</a>
-        <a class="nav-link" href="#">Trading Lessons</a>
-        <a class="nav-link" href="#">Market Chart</a>
-        <a class="nav-link" href="#">Traders Report</a>
-        <div class="divider"></div>
-        <a class="nav-link" href="#">Report an issue</a>
-      </aside>
-
+      <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
-          <button class="icon-btn" title="Notifications">🔔</button>
-          <a class="icon-btn" href="#" title="Profile">👤</a>
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+          <button type="button" class="icon-btn" title="Notifications">🔔</button>
+          <a class="icon-btn" href="./referral.html" title="Referral">🎁</a>
         </header>
         <section class="content">
           <h1 class="h1">Dashboard</h1>
-          <p class="sub">Static HTML/CSS/JS demo preserving current UX flows.</p>
-          <div class="row" style="margin-bottom: 12px">
-            <a class="btn" href="./managed-trade.html">Execute Trade</a>
+          <p class="sub">
+            Smooth demo prototype: hover the stat cards for micro-interaction. Use <strong>Market Chart</strong> for TradingView + CoinDesk headlines + CoinGecko spot
+            quotes.
+          </p>
+          <div class="row" style="margin-bottom: 16px">
+            <a class="btn" href="./managed-trade.html">Execute trade</a>
             <a class="btn secondary" href="./wallet-deposit.html">Deposit</a>
+            <a class="btn secondary" href="./market-chart.html">Charts &amp; news</a>
           </div>
           <div class="grid grid-3">
-            <div class="card">
+            <div class="card interactive" data-tilt>
               <div class="muted">Available</div>
               <div class="value" data-available>-</div>
+              <div class="api-hint">Wallet snapshot</div>
             </div>
-            <div class="card">
+            <div class="card interactive" data-tilt>
               <div class="muted">Eligible to trade</div>
               <div class="value" data-eligible>-</div>
+              <div class="api-hint">Program balance</div>
             </div>
-            <div class="card">
+            <div class="card interactive" data-tilt>
               <div class="muted">Total withdrawn</div>
               <div class="value" data-total-withdrawn>-</div>
+              <div class="api-hint">Lifetime out</div>
             </div>
           </div>
-          <div class="card">
-            <strong>Backend handoff intent</strong>
-            <p class="note">
-              This page shows what should appear and where user flows go. Forms and histories are in dedicated pages so backend can wire Laravel routes/controllers one by one.
-            </p>
+          <div class="grid grid-2">
+            <div class="card interactive" data-tilt>
+              <strong>Referral</strong>
+              <p class="note">Share your code and track demo commissions on the referral page.</p>
+              <a class="btn secondary btn-sm" href="./referral.html">Open referral hub</a>
+            </div>
+            <div class="card interactive" data-tilt>
+              <strong>Wire-up</strong>
+              <p class="note">Same-origin session hits your real <code>/api/me</code> routes; otherwise localStorage demo mode.</p>
+            </div>
           </div>
         </section>
       </main>
     </div>
     <script src="./assets/app.js"></script>
     <script>
-      DemoApp.bindSidebar();
       DemoApp.initDashboardPage();
     </script>
   </body>
-  </html>
+</html>

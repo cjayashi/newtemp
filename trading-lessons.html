@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Trading Lessons</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside id="sidebar-root" class="sidebar"></aside>
+      <main class="main">
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+        </header>
+        <section class="content">
+          <h1 class="h1">Trading lessons</h1>
+          <p class="sub">Accordion-style capsules with smooth CSS height animation — purely presentational demos.</p>
+          <div class="lesson-item">
+            <div class="lesson-head">Risk framing for delegated programs<span class="lesson-chevr">›</span></div>
+            <div class="lesson-body">
+              <div class="lesson-body-inner"><p>Show how locks, margin, and treasury buffers differ vs self-custodial trading UI.</p></div>
+            </div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-head">Reading on-chain confirmations<span class="lesson-chevr">›</span></div>
+            <div class="lesson-body">
+              <div class="lesson-body-inner"><p>Pair with Deposit page flows: explorers, confirmations, SLA expectations.</p></div>
+            </div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-head">Macro context with CoinDesk + charts<span class="lesson-chevr">›</span></div>
+            <div class="lesson-body">
+              <div class="lesson-body-inner"><p>Use the Market Chart page to cross-link TradingView overlays with curated headlines.</p></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initLessonsPage();
+    </script>
+  </body>
+</html>

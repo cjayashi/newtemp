@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Market &amp; news</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside id="sidebar-root" class="sidebar"></aside>
+      <main class="main">
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+          <button type="button" class="btn secondary btn-sm" id="refresh-market">Refresh feeds</button>
+        </header>
+        <section class="content content-wide">
+          <h1 class="h1">Charts &amp; market pulse</h1>
+          <p class="sub">
+            <strong>TradingView</strong> embedded widgets • <strong>CoinGecko</strong> REST for spot movers • <strong>CoinDesk RSS</strong> via public proxy (<code
+              >api.allorigins.win</code
+            >
+            fallback). Replace with backend aggregation in production.
+          </p>
+
+          <div class="tickertape-wrap">
+            <iframe
+              title="TradingView ticker tape"
+              src="https://www.tradingview-widget.com/embed-widget/ticker-tape/?locale=en&colorTheme=dark&isTransparent=true&backgroundColor=131722&showSymbolLogo=1&symbols=BINANCE%3ABTCUSDT%2CBINANCE%3AETHUSDT%2CCOINBASE%3ASOLUSD%2CFX_IDC%3AUSDPHP"
+              style="height: 78px; width: 100%; border: 0"></iframe>
+          </div>
+
+          <div class="tradingview-frame-wrap interactive-card" style="margin-bottom: 18px">
+            <iframe
+              title="TradingView advanced chart — BTC/USDT"
+              src="https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en&symbol=BINANCE%3ABTCUSDT&interval=D&timezone=Etc%2FUTC&theme=dark&style=1&backgroundColor=131722&gridColor=363c4e&calendarWidget=false"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <p class="note" style="padding: 10px 14px">Chart by <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color: var(--accent)">TradingView</a>.</p>
+          </div>
+
+          <h2 style="margin: 0 0 10px; font-size: 18px">Spot quotes</h2>
+          <div id="price-grid"></div>
+
+          <h2 style="margin: 28px 0 10px; font-size: 18px">CoinDesk headlines</h2>
+          <div class="card" style="padding: 14px">
+            <div id="coindesk-feed"></div>
+            <p class="api-hint" style="margin-top: 14px">
+              Sources: TradingView widgets, CoinGecko <code>/simple/price</code>, CoinDesk RSS. See
+              <a href="https://www.coindesk.com/" target="_blank" rel="noopener" style="color: var(--accent)">coindesk.com</a> for originals.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initMarketChartPage();
+    </script>
+  </body>
+</html>

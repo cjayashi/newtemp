@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Register</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="auth-page">
+    <div class="auth-top">
+      <a class="brand" href="./index.html">Zignals<span>.org</span></a>
+      <div data-auth-slot></div>
+    </div>
+    <div class="auth-panel interactive-card" data-tilt>
+      <h1 class="h1" style="font-size: 24px">Create account</h1>
+      <p id="ref-banner" class="note" style="display: none; margin-bottom: 12px"></p>
+      <p class="sub" style="margin-bottom: 18px">Everything stays in this browser — perfect for backend handoff mocks.</p>
+      <form id="register-form">
+        <label>Display name</label>
+        <input name="name" type="text" placeholder="Alex Trader" />
+        <label style="margin-top: 12px">Email</label>
+        <input name="email" type="email" required autocomplete="username" />
+        <label style="margin-top: 12px">Password (demo, 4+ chars)</label>
+        <input name="password" type="password" required minlength="4" autocomplete="new-password" />
+        <div class="row" style="margin-top: 18px">
+          <button type="submit" class="btn ok" style="flex: 1">Sign up</button>
+        </div>
+        <p class="note" style="margin-top: 14px">Already onboard? <a href="./login.html" style="color: var(--accent)">Log in</a></p>
+      </form>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initRegisterPage();
+    </script>
+  </body>
+</html>

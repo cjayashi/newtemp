@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Referral</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside id="sidebar-root" class="sidebar"></aside>
+      <main class="main">
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+          <button type="button" class="icon-btn">🔔</button>
+        </header>
+        <section class="content">
+          <h1 class="h1">Referral program</h1>
+          <p class="sub">Copy your code, share the link, simulate a click for UX review. Stats persist in localStorage.</p>
+          <div class="grid grid-3">
+            <div class="interactive-card stat-chip" data-tilt>
+              <div class="muted">Link clicks</div>
+              <div class="value" data-ref-stat="clicks">-</div>
+            </div>
+            <div class="interactive-card stat-chip" data-tilt>
+              <div class="muted">Signups</div>
+              <div class="value" data-ref-stat="signups">-</div>
+            </div>
+            <div class="interactive-card stat-chip" data-tilt>
+              <div class="muted">Commission (demo)</div>
+              <div class="value" data-ref-stat="commission">-</div>
+            </div>
+          </div>
+          <div class="card ref-hero interactive" data-tilt>
+            <strong>Your referral code</strong>
+            <div id="ref-code" class="ref-code-display" style="margin: 12px 0">—</div>
+            <div class="row">
+              <button type="button" class="btn secondary" id="copy-code">Copy code</button>
+              <button type="button" class="btn ok" id="sim-click">Simulate link click</button>
+            </div>
+          </div>
+          <div class="card interactive" data-tilt>
+            <strong>Shareable link</strong>
+            <p id="ref-link" class="note" style="word-break: break-all; margin-top: 10px; color: #cbd5e1">—</p>
+            <button type="button" class="btn secondary" id="copy-link" style="margin-top: 12px">Copy link</button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initReferralPage();
+    </script>
+  </body>
+</html>

@@ -95,6 +95,16 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+function safeExternalUrl(url) {
+  try {
+    const u = new URL(String(url).trim(), "https://coindesk.com/");
+    if (u.protocol === "http:" || u.protocol === "https:") return u.href;
+  } catch {
+    /* noop */
+  }
+  return null;
+}
+
 function setApiBadge() {
   document.querySelectorAll("[data-api-badge]").forEach((el) => {
     el.textContent = apiMode === "live" ? "Live API" : "Demo mode";
@@ -255,15 +265,135 @@ function readFileAsDataUrl(file) {
   });
 }
 
-function bindSidebar(section) {
+const DEMO_SESSION_KEY = "zignals_demo_session";
+const DEMO_REFERRAL_KEY = "zignals_demo_referral";
+
+function getDemoSession() {
+  try {
+    return JSON.parse(localStorage.getItem(DEMO_SESSION_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function setDemoSession(obj) {
+  localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(obj));
+}
+
+function clearDemoSession() {
+  localStorage.removeItem(DEMO_SESSION_KEY);
+}
+
+function getReferralMeta() {
+  try {
+    return (
+      JSON.parse(localStorage.getItem(DEMO_REFERRAL_KEY) || "null") || {
+        code: "ZIG-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+        linkClicks: 12,
+        signups: 3,
+        commissionUsd: 48.5,
+      }
+    );
+  } catch {
+    return { code: "ZIG-DEMO", linkClicks: 0, signups: 0, commissionUsd: 0 };
+  }
+}
+
+function saveReferralMeta(meta) {
+  localStorage.setItem(DEMO_REFERRAL_KEY, JSON.stringify(meta));
+}
+
+/** @param {{ active?: string, openManaged?: boolean, openWallet?: boolean }} o */
+function mountSidebar(o = {}) {
+  const root = document.getElementById("sidebar-root");
+  if (!root) return;
+
+  const { active = "", openManaged = false, openWallet = false } = o;
+  const nc = (key) => (active === key ? "nav-link active" : "nav-link");
+  const mOpen = openManaged ? "submenu open" : "submenu";
+  const wOpen = openWallet ? "submenu open" : "submenu";
+
+  root.innerHTML = `
+        <a class="brand magnetic" href="./index.html">Zignals<span>.org</span></a>
+        <a class="${nc("dashboard")}" href="./index.html">Dashboard</a>
+        <button id="toggle-managed" type="button" class="group-title">Managed Trade</button>
+        <div id="managed-submenu" class="${mOpen}">
+          <div class="submenu-inner">
+            <a class="${nc("managed_trade")}" href="./managed-trade.html">Trading Program</a>
+            <a class="nav-link" href="./managed-trade.html#history">Trading History</a>
+          </div>
+        </div>
+        <button id="toggle-wallet" type="button" class="group-title">Wallet</button>
+        <div id="wallet-submenu" class="${wOpen}">
+          <div class="submenu-inner">
+            <a class="${nc("deposit")}" href="./wallet-deposit.html">Deposit</a>
+            <a class="${nc("withdraw")}" href="./wallet-withdraw.html">Withdraw</a>
+          </div>
+        </div>
+        <a class="${nc("referral")}" href="./referral.html">Referral Program</a>
+        <div class="divider"></div>
+        <a class="${nc("announcements")}" href="./announcements.html">Announcements</a>
+        <a class="${nc("lessons")}" href="./trading-lessons.html">Trading Lessons</a>
+        <a class="${nc("market")}" href="./market-chart.html">Market Chart</a>
+        <a class="${nc("traders_report")}" href="./traders-report.html">Traders Report</a>
+        <div class="divider"></div>
+        <a class="${nc("report")}" href="./report-issue.html">Report an issue</a>
+        <div class="divider"></div>
+        <div class="sidebar-auth">
+          <a class="nav-link subtle" href="./login.html">Log in</a>
+          <a class="nav-link subtle" href="./register.html">Register</a>
+          <a class="${nc("admin")} nav-admin" href="./admin.html">Admin (demo)</a>
+        </div>`;
+}
+
+function bindSidebar() {
   document.getElementById("toggle-managed")?.addEventListener("click", () => {
     document.getElementById("managed-submenu")?.classList.toggle("open");
   });
   document.getElementById("toggle-wallet")?.addEventListener("click", () => {
     document.getElementById("wallet-submenu")?.classList.toggle("open");
   });
-  if (section === "managed") document.getElementById("managed-submenu")?.classList.add("open");
-  if (section === "wallet") document.getElementById("wallet-submenu")?.classList.add("open");
+}
+
+function bindInteractiveCards(scope = document) {
+  scope.querySelectorAll("[data-tilt], .card.interactive, .interactive-card").forEach((el) => {
+    if (el.dataset.tiltBound) return;
+    el.dataset.tiltBound = "1";
+    const max = 7;
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(900px) rotateY(${x * max}deg) rotateX(${-y * max}deg) translateZ(0)`;
+    });
+    el.addEventListener("pointerleave", () => {
+      el.style.transform = "";
+    });
+  });
+}
+
+function wireTopbarAuth() {
+  const slot = document.querySelector("[data-auth-slot]");
+  if (!slot) return;
+  const s = getDemoSession();
+  if (s?.email) {
+    slot.innerHTML = `<span class="topbar-user">${escapeHtml(s.displayName || s.email)}</span><a class="btn btn-ghost btn-sm" href="./index.html">Home</a><button type="button" class="btn btn-ghost btn-sm" id="demo-logout">Log out</button>`;
+    document.getElementById("demo-logout")?.addEventListener("click", () => {
+      clearDemoSession();
+      toast("Signed out", "Demo session cleared.", "ok");
+      window.location.href = "./login.html";
+    });
+  } else {
+    slot.innerHTML = `<a class="btn btn-ghost btn-sm" href="./login.html">Log in</a><a class="btn btn-sm" href="./register.html">Register</a>`;
+  }
+}
+
+async function initShellPage(sidebarOpts) {
+  mountSidebar(sidebarOpts);
+  bindSidebar();
+  wireTopbarAuth();
+  await initCore();
+  requestAnimationFrame(() => bindInteractiveCards(document.querySelector(".main") || document.body));
 }
 
 async function initCore() {
@@ -273,7 +403,7 @@ async function initCore() {
 }
 
 async function initManagedTradePage() {
-  await initCore();
+  await initShellPage({ active: "managed_trade", openManaged: true });
   const amount = document.getElementById("trade-amount");
   const maxBtn = document.getElementById("trade-max");
   const form = document.getElementById("trade-form");
@@ -343,11 +473,12 @@ async function initManagedTradePage() {
 }
 
 async function initDepositPage() {
-  await initCore();
+  await initShellPage({ active: "deposit", openWallet: true });
   const form = document.getElementById("deposit-form");
   const history = document.getElementById("deposit-history");
 
   async function renderHistory() {
+    if (!history) return;
     if (apiMode !== "live") {
       history.innerHTML = demoState.deposits
         .map(
@@ -431,11 +562,12 @@ async function initDepositPage() {
 }
 
 async function initWithdrawPage() {
-  await initCore();
+  await initShellPage({ active: "withdraw", openWallet: true });
   const form = document.getElementById("withdraw-form");
   const history = document.getElementById("withdraw-history");
 
   async function renderHistory() {
+    if (!history) return;
     if (apiMode !== "live") {
       history.innerHTML = demoState.withdrawals
         .map(
@@ -517,14 +649,281 @@ async function initWithdrawPage() {
 }
 
 async function initDashboardPage() {
-  await initCore();
+  await initShellPage({ active: "dashboard" });
+}
+
+async function initLoginPage() {
+  wireTopbarAuth();
+  requestAnimationFrame(() => bindInteractiveCards(document.body));
+  const form = document.getElementById("login-form");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const email = String(fd.get("email") || "").trim();
+    const pass = String(fd.get("password") || "");
+    if (email.length < 3 || pass.length < 1) {
+      toast("Login", "Enter email and password.", "err");
+      return;
+    }
+    setDemoSession({
+      email,
+      displayName: email.split("@")[0] || "Member",
+      at: Date.now(),
+    });
+    toast("Welcome", "Demo session saved locally.", "ok");
+    window.location.href = "./index.html";
+  });
+}
+
+async function initRegisterPage() {
+  wireTopbarAuth();
+  requestAnimationFrame(() => bindInteractiveCards(document.body));
+  const refBanner = document.getElementById("ref-banner");
+  const refCode = new URLSearchParams(location.search).get("ref");
+  if (refBanner && refCode) {
+    refBanner.style.display = "block";
+    refBanner.textContent = `Referral code detected: ${refCode} (demo attribution).`;
+  }
+  const form = document.getElementById("register-form");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const email = String(fd.get("email") || "").trim();
+    const name = String(fd.get("name") || "").trim();
+    const pass = String(fd.get("password") || "");
+    if (email.length < 3 || pass.length < 4) {
+      toast("Register", "Use a valid email and password (4+ chars).", "err");
+      return;
+    }
+    const meta = getReferralMeta();
+    const refParam = new URLSearchParams(location.search).get("ref")?.trim();
+    if (refParam) {
+      meta.signups += 1;
+      meta.commissionUsd += 12.5;
+    }
+    saveReferralMeta(meta);
+    setDemoSession({
+      email,
+      displayName: name || email.split("@")[0] || "Member",
+      at: Date.now(),
+      referralCode: meta.code,
+    });
+    toast("Account ready", "You're signed in for this demo.", "ok");
+    window.location.href = "./index.html";
+  });
+}
+
+async function initAdminPage() {
+  await initShellPage({ active: "admin", openManaged: false, openWallet: false });
+  const tbody = document.getElementById("admin-activity");
+  if (!tbody) return;
+  function row(cells) {
+    return `<tr>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+  }
+  const lines = [];
+  demoState.deposits.slice(0, 5).forEach((d) => {
+    lines.push(row([new Date(d.createdAt).toLocaleString(), "Deposit", escapeHtml(d.method), money(d.amountUsd), escapeHtml(d.status)]));
+  });
+  demoState.withdrawals.slice(0, 5).forEach((w) => {
+    lines.push(row([new Date(w.createdAt).toLocaleString(), "Withdraw", escapeHtml(w.destination || "—"), money(w.amountUsd), escapeHtml(w.status)]));
+  });
+  demoState.trades.slice(0, 5).forEach((t) => {
+    lines.push(row([new Date(t.createdAt).toLocaleString(), "Trade", "Program", money(t.amountUsd), escapeHtml(t.status)]));
+  });
+  tbody.innerHTML =
+    lines.join("") ||
+    row([
+      "—",
+      '<span class="muted">No demo activity yet</span>',
+      "—",
+      "—",
+      "—",
+    ]);
+
+  document.querySelectorAll("[data-admin-stat]").forEach((el) => {
+    const k = el.getAttribute("data-admin-stat");
+    if (k === "deposits") el.textContent = String(demoState.deposits.length);
+    if (k === "withdrawals") el.textContent = String(demoState.withdrawals.length);
+    if (k === "trades") el.textContent = String(demoState.trades.length);
+    if (k === "users") el.textContent = getDemoSession() ? "1 (demo)" : "0";
+  });
+}
+
+function staticPageBase() {
+  try {
+    return new URL(".", location.href).href;
+  } catch {
+    return "./";
+  }
+}
+
+async function initReferralPage() {
+  await initShellPage({ active: "referral" });
+  const meta = getReferralMeta();
+  const link = new URL(`register.html?ref=${encodeURIComponent(meta.code)}`, staticPageBase()).href;
+
+  const codeEl = document.getElementById("ref-code");
+  const linkEl = document.getElementById("ref-link");
+  if (codeEl) codeEl.textContent = meta.code;
+  if (linkEl) linkEl.textContent = link;
+
+  document.querySelectorAll("[data-ref-stat]").forEach((el) => {
+    const k = el.getAttribute("data-ref-stat");
+    if (k === "clicks") el.textContent = String(meta.linkClicks);
+    if (k === "signups") el.textContent = String(meta.signups);
+    if (k === "commission") el.textContent = money(meta.commissionUsd);
+  });
+
+  document.getElementById("copy-code")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(meta.code);
+      toast("Copied", "Referral code copied.", "ok");
+    } catch {
+      toast("Copy", "Could not copy — select manually.", "err");
+    }
+  });
+  document.getElementById("copy-link")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      toast("Copied", "Referral link copied.", "ok");
+    } catch {
+      toast("Copy", "Could not copy — select manually.", "err");
+    }
+  });
+
+  document.getElementById("sim-click")?.addEventListener("click", () => {
+    meta.linkClicks += 1;
+    saveReferralMeta(meta);
+    document.querySelector('[data-ref-stat="clicks"]') && (document.querySelector('[data-ref-stat="clicks"]').textContent = String(meta.linkClicks));
+    toast("Demo", "Simulated link click.", "ok");
+  });
+}
+
+async function initAnnouncementsPage() {
+  await initShellPage({ active: "announcements" });
+}
+
+async function initLessonsPage() {
+  await initShellPage({ active: "lessons" });
+  document.querySelectorAll(".lesson-item").forEach((item) => {
+    item.querySelector(".lesson-head")?.addEventListener("click", () => {
+      item.classList.toggle("open");
+    });
+  });
+}
+
+async function initTradersReportPage() {
+  await initShellPage({ active: "traders_report" });
+}
+
+async function initReportIssuePage() {
+  await initShellPage({ active: "report" });
+  const form = document.getElementById("issue-form");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    toast("Thanks", "Demo: issue would be sent to support.", "ok");
+    form.reset();
+  });
+}
+
+async function fetchCoinGeckoSimple() {
+  const res = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true"
+  );
+  if (!res.ok) throw new Error("price");
+  return res.json();
+}
+
+async function fetchCoinDeskRssTitles(max = 8) {
+  const rssUrl = "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml";
+  const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rssUrl);
+  const res = await fetch(proxy);
+  if (!res.ok) throw new Error("rss");
+  const text = await res.text();
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  const items = [...doc.querySelectorAll("item")].slice(0, max);
+  return items.map((it) => ({
+    title: it.querySelector("title")?.textContent?.trim() || "—",
+    link: it.querySelector("link")?.textContent?.trim() || "",
+    pub: it.querySelector("pubDate")?.textContent?.trim() || "",
+  }));
+}
+
+async function populateMarketPanels() {
+  const box = document.getElementById("price-grid");
+  if (box) {
+    box.innerHTML = `<p class="note">Loading spot prices…</p>`;
+    try {
+      const j = await fetchCoinGeckoSimple();
+      const cards = ["bitcoin", "ethereum", "solana"].map((id) => {
+        const row = j[id];
+        if (!row) return "";
+        const ch = row.usd_24h_change != null ? Number(row.usd_24h_change).toFixed(2) + "%" : "—";
+        const up = Number(row.usd_24h_change) >= 0;
+        return `<div class="interactive-card stat-chip" data-tilt>
+          <div class="muted" style="text-transform:capitalize">${id}</div>
+          <div class="value" style="font-size:22px">${money(row.usd)}</div>
+          <div class="price-24h ${up ? "up" : "down"}">24h ${ch}</div>
+          <div class="api-hint">via CoinGecko API</div>
+        </div>`;
+      });
+      box.innerHTML = `<div class="grid grid-3">${cards.join("")}</div>`;
+      bindInteractiveCards(box);
+    } catch {
+      box.innerHTML = `<p class="note">Could not load CoinGecko. Check network / adblock.</p>`;
+    }
+  }
+
+  const feed = document.getElementById("coindesk-feed");
+  if (feed) {
+    feed.innerHTML = `<p class="note">Loading CoinDesk headlines…</p>`;
+    try {
+      const items = await fetchCoinDeskRssTitles(10);
+      feed.innerHTML = items
+        .map((it) => {
+          const href = safeExternalUrl(it.link) || "https://www.coindesk.com/";
+          return `<a class="news-row interactive" href="${href}" target="_blank" rel="noopener noreferrer">
+              <span class="news-title">${escapeHtml(it.title)}</span>
+              <span class="news-meta">${escapeHtml(it.pub)}</span>
+            </a>`;
+        })
+        .join("");
+    } catch {
+      feed.innerHTML =
+        `<p class="note">RSS proxy unavailable. Read live at </p>` +
+        `<a href="https://www.coindesk.com/" target="_blank" rel="noopener" class="btn secondary btn-sm">coindesk.com</a>`;
+    }
+  }
+}
+
+async function initMarketChartPage() {
+  await initShellPage({ active: "market" });
+  await populateMarketPanels();
+  const btn = document.getElementById("refresh-market");
+  if (btn && !btn.dataset.bound) {
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", async () => {
+      await populateMarketPanels();
+      toast("Market", "Refreshed feeds & prices.", "ok");
+    });
+  }
 }
 
 window.DemoApp = {
   bindSidebar,
+  mountSidebar,
   initDashboardPage,
   initManagedTradePage,
   initDepositPage,
   initWithdrawPage,
+  initLoginPage,
+  initRegisterPage,
+  initAdminPage,
+  initReferralPage,
+  initAnnouncementsPage,
+  initLessonsPage,
+  initMarketChartPage,
+  initTradersReportPage,
+  initReportIssuePage,
   toast,
 };

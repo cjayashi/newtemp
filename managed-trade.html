@@ -3,64 +3,56 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Zignals Static Demo - Managed Trade</title>
+    <title>Zignals — Managed Trade</title>
     <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div class="layout">
-      <aside class="sidebar">
-        <a class="brand" href="./index.html">Zignals<span>.org</span></a>
-        <a class="nav-link" href="./index.html">Dashboard</a>
-        <button id="toggle-managed" class="group-title">Managed Trade</button>
-        <div id="managed-submenu" class="submenu open">
-          <div class="submenu-inner">
-            <a class="nav-link active" href="./managed-trade.html">Trading Program</a>
-            <a class="nav-link" href="#history">Trading History</a>
-          </div>
-        </div>
-        <button id="toggle-wallet" class="group-title">Wallet</button>
-        <div id="wallet-submenu" class="submenu">
-          <div class="submenu-inner">
-            <a class="nav-link" href="./wallet-deposit.html">Deposit</a>
-            <a class="nav-link" href="./wallet-withdraw.html">Withdraw</a>
-          </div>
-        </div>
-      </aside>
+      <aside id="sidebar-root" class="sidebar"></aside>
       <main class="main">
         <header class="topbar">
-          <span class="badge-live demo" data-api-badge style="margin-right: auto">Connecting…</span>
-          <button class="icon-btn">🔔</button>
-          <a class="icon-btn" href="#">👤</a>
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+          <button type="button" class="icon-btn">🔔</button>
+          <a class="icon-btn" href="./market-chart.html">📈</a>
         </header>
         <section class="content">
           <h1 class="h1">Manage Trading Program</h1>
-          <p class="sub">1% per day, 30-day lock, 30% total profit + capital return.</p>
-          <div class="card">
+          <p class="sub">1% per day, 30-day lock — progress animates after execution.</p>
+          <div class="card interactive" data-tilt>
             <form id="trade-form">
               <label>Eligible to trade</label>
               <div class="value" data-eligible>-</div>
-              <div class="row" style="margin-top:10px">
-                <div style="flex:1">
+              <div class="row" style="margin-top: 12px">
+                <div style="flex: 1">
                   <label>Trade amount (USD)</label>
                   <input id="trade-amount" type="number" step="0.01" min="1" placeholder="100.00" />
                 </div>
               </div>
-              <div class="row" style="margin-top:10px">
+              <div class="row" style="margin-top: 12px">
                 <button type="button" id="trade-max" class="btn secondary">Max</button>
                 <button type="submit" class="btn ok">Execute trade</button>
               </div>
-              <p class="note">Readonly terms: Lock duration 30 days · Daily profit 1% · Total return 130% of principal.</p>
+              <p class="note">Terms: Lock 30 days · ~1% / day · 130% modeled return demo.</p>
             </form>
           </div>
-          <div class="card allocations-wrap">
+          <div class="card allocations-wrap interactive" data-tilt>
             <h3 style="margin: 0 0 10px">Active allocation &amp; progress</h3>
-            <p class="note" style="margin-top: 0">30-day lock • day ticks and bar update after you execute a trade (demo uses your browser; live uses the API).</p>
+            <p class="note" style="margin-top: 0">Interactive day ticks hover on desktop.</p>
             <div id="allocations-ongoing"></div>
           </div>
           <div id="history" class="card">
-            <h3 style="margin:0 0 6px">Trading History</h3>
+            <h3 style="margin: 0 0 10px">Trading History</h3>
             <table class="history">
-              <thead><tr><th>Date</th><th>Principal</th><th>Status</th><th>Expected Return</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Principal</th>
+                  <th>Status</th>
+                  <th>Expected Return</th>
+                </tr>
+              </thead>
               <tbody id="trade-history"></tbody>
             </table>
           </div>
@@ -69,8 +61,7 @@
     </div>
     <script src="./assets/app.js"></script>
     <script>
-      DemoApp.bindSidebar("managed");
       DemoApp.initManagedTradePage();
     </script>
   </body>
-  </html>
+</html>

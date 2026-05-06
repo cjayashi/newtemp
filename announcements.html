@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Announcements</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside id="sidebar-root" class="sidebar"></aside>
+      <main class="main">
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+        </header>
+        <section class="content">
+          <h1 class="h1">Announcements</h1>
+          <p class="sub">Native <code>&lt;details&gt;</code> drawers — tap to expand. Replace copy with CMS content.</p>
+          <details class="announce-card interactive" open>
+            <summary>Settlement window upgrades</summary>
+            <div class="announce-body">Automated treasury sweeps move to nightly UTC batches starting next demo sprint. Frontend should surface pending states sooner.</div>
+          </details>
+          <details class="announce-card">
+            <summary>Managed program parameter review</summary>
+            <div class="announce-body">Daily accrual and lock length may be mirrored from backend config — charts already anticipate API-driven durations.</div>
+          </details>
+          <details class="announce-card">
+            <summary>Referral leaderboard (coming)</summary>
+            <div class="announce-body">Referral counters on this prototype are mocked for interactions; Laravel can emit real tiered rewards.</div>
+          </details>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initAnnouncementsPage();
+    </script>
+  </body>
+</html>

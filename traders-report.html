@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals — Traders Report</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside id="sidebar-root" class="sidebar"></aside>
+      <main class="main">
+        <header class="topbar">
+          <span class="badge-live demo" data-api-badge style="margin-right: 8px">Connecting…</span>
+          <div data-auth-slot></div>
+        </header>
+        <section class="content">
+          <h1 class="h1">Traders report</h1>
+          <p class="sub">Gamified KPI tiles — tweak numbers via API later.</p>
+          <div class="grid grid-2">
+            <div class="interactive-card" data-tilt>
+              <div class="row" style="justify-content: space-between">
+                <span class="muted">Win rate</span>
+                <span class="pill ok-pill">+2.4%</span>
+              </div>
+              <div class="value">62%</div>
+              <p class="note">Rolling 90-day blended accounts (demo).</p>
+            </div>
+            <div class="interactive-card" data-tilt>
+              <div class="muted">Median hold</div>
+              <div class="value">18d</div>
+              <p class="note">Compared to baseline 14d target.</p>
+            </div>
+            <div class="interactive-card" data-tilt>
+              <div class="muted">Notional routed</div>
+              <div class="value">$4.8M</div>
+              <p class="note">Synthetic figure for prototype storytelling.</p>
+            </div>
+            <div class="interactive-card" data-tilt>
+              <div class="muted">Support SLA</div>
+              <div class="value">1.6h</div>
+              <p class="note">Mean first response mock.</p>
+            </div>
+          </div>
+          <div class="card interactive" data-tilt>
+            <strong>Macro snapshot</strong>
+            <p class="note" style="margin-top: 8px">Jump to <a href="./market-chart.html" style="color: var(--accent)">Market Chart</a> for TradingView overlays + CoinDesk feed.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.initTradersReportPage();
+    </script>
+  </body>
+</html>
