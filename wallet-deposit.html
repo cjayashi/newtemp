@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals Static Demo - Wallet Deposit</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="./index.html">Zignals<span>.org</span></a>
+        <a class="nav-link" href="./index.html">Dashboard</a>
+        <button id="toggle-managed" class="group-title">Managed Trade</button>
+        <div id="managed-submenu" class="submenu"><div class="submenu-inner">
+          <a class="nav-link" href="./managed-trade.html">Trading Program</a>
+          <a class="nav-link" href="./managed-trade.html#history">Trading History</a>
+        </div></div>
+        <button id="toggle-wallet" class="group-title">Wallet</button>
+        <div id="wallet-submenu" class="submenu open"><div class="submenu-inner">
+          <a class="nav-link active" href="./wallet-deposit.html">Deposit</a>
+          <a class="nav-link" href="./wallet-withdraw.html">Withdraw</a>
+        </div></div>
+      </aside>
+      <main class="main">
+        <header class="topbar"><button class="icon-btn">🔔</button><a class="icon-btn" href="#">👤</a></header>
+        <section class="content">
+          <h1 class="h1">Deposit</h1>
+          <p class="sub">Mode of payment + deposit form (same expected app behavior).</p>
+          <div class="card">
+            <form id="deposit-form" class="grid grid-2">
+              <div>
+                <label>Mode of payment</label>
+                <select name="method"><option>SOL</option><option>BSC</option><option>TRX</option></select>
+              </div>
+              <div>
+                <label>Amount (USD)</label>
+                <input name="amount" type="number" step="0.01" min="1" required />
+              </div>
+              <div style="grid-column:1/-1">
+                <label>Reference number</label>
+                <input name="reference" required />
+              </div>
+              <div style="grid-column:1/-1">
+                <label>Proof image</label>
+                <input type="file" accept="image/*" />
+              </div>
+              <div style="grid-column:1/-1"><button class="btn ok" type="submit">Submit Deposit</button></div>
+            </form>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 6px">Deposit History</h3>
+            <table class="history">
+              <thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="deposit-history"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.bindSidebar("wallet");
+      DemoApp.renderCommon();
+      DemoApp.bindDeposit();
+    </script>
+  </body>
+  </html>

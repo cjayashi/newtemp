@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals Static Demo - Dashboard</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="./index.html">Zignals<span>.org</span></a>
+        <a class="nav-link active" href="./index.html">Dashboard</a>
+        <button id="toggle-managed" class="group-title">Managed Trade</button>
+        <div id="managed-submenu" class="submenu">
+          <div class="submenu-inner">
+            <a class="nav-link" href="./managed-trade.html">Trading Program</a>
+            <a class="nav-link" href="./managed-trade.html#history">Trading History</a>
+          </div>
+        </div>
+        <button id="toggle-wallet" class="group-title">Wallet</button>
+        <div id="wallet-submenu" class="submenu">
+          <div class="submenu-inner">
+            <a class="nav-link" href="./wallet-deposit.html">Deposit</a>
+            <a class="nav-link" href="./wallet-withdraw.html">Withdraw</a>
+          </div>
+        </div>
+        <a class="nav-link" href="#">Affiliate Program</a>
+        <div class="divider"></div>
+        <a class="nav-link" href="#">Announcements</a>
+        <a class="nav-link" href="#">Trading Lessons</a>
+        <a class="nav-link" href="#">Market Chart</a>
+        <a class="nav-link" href="#">Traders Report</a>
+        <div class="divider"></div>
+        <a class="nav-link" href="#">Report an issue</a>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <button class="icon-btn" title="Notifications">🔔</button>
+          <a class="icon-btn" href="#" title="Profile">👤</a>
+        </header>
+        <section class="content">
+          <h1 class="h1">Dashboard</h1>
+          <p class="sub">Static HTML/CSS/JS demo preserving current UX flows.</p>
+          <div class="row" style="margin-bottom: 12px">
+            <a class="btn" href="./managed-trade.html">Execute Trade</a>
+            <a class="btn secondary" href="./wallet-deposit.html">Deposit</a>
+          </div>
+          <div class="grid grid-3">
+            <div class="card">
+              <div class="muted">Available</div>
+              <div class="value" data-available>-</div>
+            </div>
+            <div class="card">
+              <div class="muted">Eligible to trade</div>
+              <div class="value" data-eligible>-</div>
+            </div>
+            <div class="card">
+              <div class="muted">Total withdrawn</div>
+              <div class="value" id="total-withdrawn">See Withdraw page</div>
+            </div>
+          </div>
+          <div class="card">
+            <strong>Backend handoff intent</strong>
+            <p class="note">
+              This page shows what should appear and where user flows go. Forms and histories are in dedicated pages so backend can wire Laravel routes/controllers one by one.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.bindSidebar();
+      DemoApp.renderCommon();
+    </script>
+  </body>
+  </html>

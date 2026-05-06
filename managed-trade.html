@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zignals Static Demo - Managed Trade</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="./index.html">Zignals<span>.org</span></a>
+        <a class="nav-link" href="./index.html">Dashboard</a>
+        <button id="toggle-managed" class="group-title">Managed Trade</button>
+        <div id="managed-submenu" class="submenu open">
+          <div class="submenu-inner">
+            <a class="nav-link active" href="./managed-trade.html">Trading Program</a>
+            <a class="nav-link" href="#history">Trading History</a>
+          </div>
+        </div>
+        <button id="toggle-wallet" class="group-title">Wallet</button>
+        <div id="wallet-submenu" class="submenu">
+          <div class="submenu-inner">
+            <a class="nav-link" href="./wallet-deposit.html">Deposit</a>
+            <a class="nav-link" href="./wallet-withdraw.html">Withdraw</a>
+          </div>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <button class="icon-btn">🔔</button>
+          <a class="icon-btn" href="#">👤</a>
+        </header>
+        <section class="content">
+          <h1 class="h1">Manage Trading Program</h1>
+          <p class="sub">1% per day, 30-day lock, 30% total profit + capital return.</p>
+          <div class="card">
+            <form id="trade-form">
+              <label>Eligible to trade</label>
+              <div class="value" data-eligible>-</div>
+              <div class="row" style="margin-top:10px">
+                <div style="flex:1">
+                  <label>Trade amount (USD)</label>
+                  <input id="trade-amount" type="number" step="0.01" min="1" placeholder="100.00" />
+                </div>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <button type="button" id="trade-max" class="btn secondary">Max</button>
+                <button type="submit" class="btn ok">Execute trade</button>
+              </div>
+              <p class="note">Readonly terms: Lock duration 30 days · Daily profit 1% · Total return 130% of principal.</p>
+            </form>
+          </div>
+          <div id="history" class="card">
+            <h3 style="margin:0 0 6px">Trading History</h3>
+            <table class="history">
+              <thead><tr><th>Date</th><th>Principal</th><th>Status</th><th>Expected Return</th></tr></thead>
+              <tbody id="trade-history"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./assets/app.js"></script>
+    <script>
+      DemoApp.bindSidebar("managed");
+      DemoApp.renderCommon();
+      DemoApp.bindManagedTrade();
+    </script>
+  </body>
+  </html>
